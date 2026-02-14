@@ -1,0 +1,712 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إيثار | من القلب</title>
+  <style>
+    :root {
+      --bg1: #07111b;
+      --bg2: #13273b;
+      --mint: #95e7d8;
+      --pink: #f2b0ca;
+      --txt: #ecf8ff;
+      --muted: #a6bece;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; overflow-x: hidden; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      color: var(--txt);
+      background:
+        radial-gradient(1300px 700px at 85% -10%, rgba(242,176,202,.22), transparent 60%),
+        radial-gradient(1100px 600px at 10% -10%, rgba(149,231,216,.2), transparent 62%),
+        linear-gradient(170deg, var(--bg1), var(--bg2));
+    }
+
+    .bg-hearts {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: url("images/hearts-bg.png") center/cover no-repeat;
+      opacity: .17;
+    }
+
+    .floats {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .float {
+      position: absolute;
+      opacity: .75;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.28));
+      will-change: transform, opacity;
+    }
+
+    .f1 { width: 120px; top: 12%; left: 6%; }
+    .f2 { width: 78px; top: 22%; right: 9%; }
+    .f3 { width: 94px; top: 56%; right: 15%; }
+    .f4 { width: 58px; top: 70%; left: 12%; opacity: .55; }
+    .f5 { width: 140px; top: 38%; left: 50%; transform: translateX(-50%); opacity: .12; }
+
+    .pf1 { width: 140px; top: 16%; left: 18%; border-radius: 16px; }
+    .pf2 { width: 120px; top: 28%; right: 20%; border-radius: 16px; }
+    .pf3 { width: 150px; top: 48%; left: 8%; border-radius: 16px; }
+    .pf4 { width: 128px; top: 58%; right: 10%; border-radius: 16px; }
+    .pf5 { width: 112px; top: 74%; left: 28%; border-radius: 16px; }
+    .pf6 { width: 136px; top: 78%; right: 30%; border-radius: 16px; }
+    .pf7 { width: 124px; top: 44%; right: 42%; border-radius: 16px; }
+
+    .progress {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(620px, calc(100% - 28px));
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(6, 20, 32, .56);
+      border: 1px solid rgba(149,231,216,.2);
+      z-index: 20;
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+    }
+
+    .progress > i {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--mint), var(--pink));
+      box-shadow: 0 0 10px rgba(242,176,202,.35);
+      transition: width .1s linear;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 5;
+      width: min(980px, calc(100% - 36px));
+      margin: 74px auto 30px;
+    }
+
+    .hero {
+      min-height: 82vh;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .chip {
+      border: 1px solid rgba(242,176,202,.45);
+      background: rgba(242,176,202,.12);
+      color: #ffe2ee;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13px;
+      letter-spacing: .2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 9vw, 106px);
+      line-height: .98;
+      text-shadow: 0 0 24px rgba(242,176,202,.38);
+      font-weight: 700;
+    }
+
+    .line {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(15px, 2.1vw, 20px);
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .scroll-tip {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #c7eadf;
+      opacity: .9;
+    }
+
+    .journey {
+      min-height: 240vh;
+      position: relative;
+    }
+
+    .journey-sticky {
+      position: sticky;
+      top: 72px;
+      min-height: calc(100vh - 84px);
+      display: grid;
+      align-content: center;
+      text-align: center;
+      gap: 24px;
+      padding: 20px 10px;
+    }
+
+    .story-title {
+      font-size: clamp(28px, 4vw, 44px);
+      margin: 0;
+    }
+
+    .story-step {
+      opacity: .15;
+      transform: translateY(16px) scale(.98);
+      transition: .35s ease;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .story-step.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .story-step .d {
+      color: #ffd7e8;
+      font-size: clamp(15px, 2vw, 18px);
+      margin-bottom: 6px;
+    }
+
+    .story-step .t {
+      color: #f5fbff;
+      font-size: clamp(20px, 2.9vw, 34px);
+      line-height: 1.6;
+    }
+
+    .unlock-zone {
+      min-height: 90vh;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 10px;
+      padding: 18px 6px;
+    }
+
+    .lock {
+      font-size: 54px;
+      transition: transform .25s ease;
+    }
+
+    .unlock-h {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+    }
+
+    .unlock-s {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .letter {
+      width: min(760px, calc(100% - 12px));
+      margin-top: 12px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(18px) scale(.98);
+      transition: .45s ease;
+      pointer-events: none;
+    }
+
+    .letter-envelope {
+      position: relative;
+      height: 210px;
+      border-radius: 18px;
+      background: linear-gradient(160deg, #f4c9d9, #e5a9c2);
+      box-shadow: 0 20px 38px rgba(0,0,0,.28);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+
+    .letter-envelope::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 54%;
+      background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,0));
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      opacity: .86;
+      transform-origin: top;
+      transition: transform .55s ease;
+      z-index: 3;
+    }
+
+    .letter-paper {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      min-height: 158px;
+      border-radius: 12px;
+      background: #fff8f1;
+      color: #4f2b36;
+      padding: 14px 16px;
+      line-height: 1.8;
+      font-size: clamp(15px, 1.9vw, 20px);
+      white-space: pre-line;
+      box-shadow: 0 8px 20px rgba(0,0,0,.2);
+      transform: translateY(55%);
+      transition: transform .6s ease;
+      z-index: 2;
+      text-shadow: none;
+    }
+
+    .letter.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .letter.show .letter-envelope::before {
+      transform: rotateX(180deg);
+    }
+
+    .letter.show .letter-paper {
+      transform: translateY(-8%);
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding-bottom: 8px;
+    }
+
+    /* Click Me gate */
+    .bgoverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(33, 16, 48, 0.78);
+      z-index: 999;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(6px);
+      transition: opacity .35s ease;
+    }
+
+    .gate {
+      width: min(320px, calc(100% - 28px));
+      text-align: center;
+      position: relative;
+    }
+
+    .ico {
+      display: grid;
+      place-items: center;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 40%, rgba(255,64,129,.65), rgba(233,30,99,.45));
+      box-shadow: 0 20px 45px rgba(0,0,0,.35), inset 0 0 20px rgba(255,255,255,.15);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.24);
+    }
+
+    .ico::before,
+    .ico::after {
+      content: "❤";
+      position: absolute;
+      font-size: 140px;
+      opacity: .45;
+      animation: beat 2.4s infinite ease-in-out;
+    }
+
+    .ico::after {
+      font-size: 170px;
+      opacity: .2;
+      animation-duration: 3.2s;
+    }
+
+    .title {
+      position: relative;
+      z-index: 3;
+      font-size: 42px;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+      text-shadow: 2px 4px 12px rgba(0,0,0,.35);
+      letter-spacing: 0.6px;
+    }
+
+    .open .ico {
+      animation: openHeart 1.05s ease forwards;
+    }
+
+    .endtext {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: .35s ease;
+      margin-top: 16px;
+    }
+
+    .open .endtext {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .endtext h2 {
+      margin: 0;
+      font-weight: 500;
+      color: #ffdceb;
+      font-size: 28px;
+    }
+
+    .endtext h3 {
+      margin: 8px 0 0;
+      font-weight: 400;
+      color: #d6ecff;
+      font-size: 16px;
+    }
+
+    .bgoverlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); opacity: .25; }
+      50% { transform: scale(1.12); opacity: .42; }
+    }
+
+    @keyframes openHeart {
+      0% { transform: scale(1); }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(7); opacity: 0; }
+    }
+.vf1 { width: 120px; top: 20%; right: 900px;  border-radius: 50px; }
+.vf3 { width: 140px; top: 70%; right: 350px; border-radius: 50px; }
+    @media (max-width: 760px) {
+      .f1 { width: 88px; }
+      .f2 { width: 58px; }
+      .f3 { width: 70px; }
+      .f4 { width: 46px; }
+      .f5 { width: 96px; }
+      .pf1 { width: 88px; }
+      .pf2 { width: 80px; }
+      .pf3 { width: 96px; }
+      .pf4 { width: 84px; }
+      .pf5 { width: 76px; }
+      .pf6 { width: 90px; }
+      .pf7 { width: 82px; }
+      .journey-sticky { top: 62px; min-height: calc(100vh - 74px); }
+      .ico { width: 230px; height: 230px; }
+      .title { font-size: 34px; }
+
+
+
+
+
+    }
+  </style>
+</head>
+<body>
+  <div class="bgoverlay" id="gateOverlay">
+    <div class="gate" id="gateContainer">
+      <span class="ico" id="gateButton">
+        <span class="title">ارقعني كف</span>
+      </span>
+      <div class="endtext">
+        <h2>بيوجع بس يلا بينا</h2>
+        <h3>For Eithar</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-hearts"></div>
+
+  <div class="floats" aria-hidden="true">
+    <img class="float f1" src="images/heart.png" alt="" />
+    <img class="float f2" src="images/heart-p-500.png" alt="" />
+    <img class="float f3" src="images/heart.png" alt="" />
+    <img class="float f4" src="images/preview-33.png" alt="" />
+    <img class="float f5" src="images/heart-s.svg" alt="" />
+    <img class="float pf1" src="images/us-1.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf2" src="images/us-2.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf3" src="images/us-3.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf4" src="images/us-4.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf5" src="images/us-5.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf6" src="images/us-6.jpeg" alt="" onerror="this.style.display='none'" />
+    <img class="float pf7" src="images/us-7.jpeg" alt="" onerror="this.style.display='none'" />
+    <!-- الفيديوهات الجديدة بدون حذف الصور -->
+
+
+  </div>
+<video class="float vf1" autoplay muted loop playsinline src="our-1.mp4" onerror="this.style.display='none'"></video>
+<video class="float vf3" autoplay muted loop playsinline src="our-3.mp4" onerror="this.style.display='none'"></video>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <main class="wrap">
+    <section class="hero reveal">
+      <div class="chip">I LOVE YOU SO MUCH</div>
+      <h1>Eithoooooooooo</h1>
+      <p class="line"></p>
+      <p class="scroll-tip">انزلي تحت بهدوء </p>
+    </section>
+
+    <section class="journey" id="journey">
+      <div class="journey-sticky">
+        <h2 class="story-title"></h2>
+
+        <article class="story-step active">
+          <div class="d">أغسطس 2025</div>
+          <div class="t">من هنا كل حاجة بدأت وبدأت معاها سعادتي.</div>
+        </article>
+
+        <article class="story-step">
+          <div class="d">19 / 1</div>
+          <div class="t">أول مقابلة انا ومراتي ومن ساعتها اليوم بقى ليه طعم تاني.</div>
+        </article>
+
+        <article class="story-step">
+          <div class="d">كل يوم بعد كده</div>
+          <div class="t">وجودك بقى رزق مش مجرد صدفة.</div>
+        </article>
+
+        <article class="story-step">
+          <div class="d">Valentine</div>
+          <div class="t">أنا اخترتك من قلبي ولسه بختارك كل يوم.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="unlock-zone reveal" id="unlockZone">
+      <div class="lock" id="lockIcon"></div>
+      <h3 class="unlock-h"> </h3>
+      <p class="unlock-s"></p>
+      <div class="letter" id="letter">
+        <div class="letter-envelope">
+          <div class="letter-paper">يا إيثار يا حبيبتي يا نور عيني،
+
+مش عارف أبدأ منين، بس حسيت إني لازم أكتبلك كل اللي جوا قلبي، كل كلمة، كل شعور، كل لحظة بفتكرها وإحنا سوا. من ساعة ما عرفتك وأنا حاسس إن الدنيا اتغيرت، إن كل حاجة حواليا بقت ليها طعم تاني، كل يوم بيعدي بحس إني بحبك أكتر وأكتر. والله ما فيش كلمة تكفي توصف قد إيه وجودك جنبي بيديني طاقة وفرحة ما حصلتش قبل كده في حياتي.
+
+فاكرة أول مرة اتقابلنا فيها؟ فاكر كل تفصيلة، ابتسامتك، نظرتك، طريقة كلامك، حتى أصغر حركاتك، كلها محفورة جوه قلبي. ومن ساعتها وانا كل يوم بفكر أزود قربنا من بعض، نفهم بعض أكتر، نضحك سوا، نشوف الدنيا بعيني بعض. وكل مرة بضحك فيها، أول حاجة بتجيلك في بالي، كل مرة بحزن فيها، نفسي تكون جنبي تمسح دموعي.
+
+إنتي مش بس حبيبتي، إنتي صديقتي، أختي، ضحكتي، سعادتي، كل حاجة حلوة في حياتي. كل يوم بشوفك فيه بحس الدنيا فيها معنى، وبنسى كل همومي ومشاكلي. يا ريت تعرفي قد إيه أنا ممتن لكل ثانية قضيناها سوا، لكل مكالمة، لكل رسالة، لكل لمسة بسيطة منك.
+
+ومش بس كده، أنا بحب فيكي كل حاجة، كل تفصيلة صغيرة، كل عيب وصعوبة، كل كلمة بتقولها، كل حركة بتعمليها، حتى طريقة تفكيرك وطريقتك في رؤية الدنيا. بحس إن وجودك معايا بيخليني أحسن، بيخليني أكون نسخة أحسن من نفسي، وده شعور غريب وجميل جدًا.
+
+وأكيد فاكرة لما كنا بنضحك على أي حاجة صغيرة، أو لما كنت بتواسييني في وقت صعب، أو حتى لما كنا ساكتين وبنكون مع بعض، كل اللحظات دي محفورة جوه قلبي ومش هتتنسي. أنا عارف إن الحياة مش دايمًا سهلة، بس معاك أي صعوبة تبقى بسيطة، أي مشكلة تبقى أخف، عشان وجودك بيخلي كل حاجة أهون.
+
+أنا بحلم بالمستقبل معاك، بكل تفاصيله، بكل يوم جديد، بكل خطوة نعملها سوا. نفسي نعيش أحلى حياة، نضحك، نسافر، نشتري حاجات غريبة، نعمل مغامرات، ونسند بعض في كل لحظة. نفسي كمان نكبر سوا، ونفضل جنب بعض طول العمر، نحب ونضحك ونكون فريق واحد، مهما حصل.
+
+إنتي هدية ربنا ليا، ومافيش يوم بيمر من غير ما أشكر ربنا إنك في حياتي، وإن قلبي اتقابل بقلبك. أنا مبسوط بكل كلمة منك، بكل ضحكة منك، بكل لحظة بنقضيها سوا. وربنا يخليكي ليا، ونفضل نكمل بعض، ونكبر مع بعض، ونعيش كل حاجة حلوة في الدنيا دي.
+
+بحبك يا إيثار… أكتر من أي كلام ممكن يتقال، أكتر من أي شعور ممكن يتحس. بحبك النهاردة، بكرة، كل يوم، وكل ثانية بتمر. وبوعدك، مهما حصل، هفضل جنبك، أحميكي، أفرحلك، وأخليكي دايمًا سعيدة.
+
+❤️❤️❤️
+</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Made with love for Eithar</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function () {
+      var gateOverlay = document.getElementById('gateOverlay');
+      var gateButton = document.getElementById('gateButton');
+      var gateContainer = document.getElementById('gateContainer');
+
+      gateButton.addEventListener('click', function () {
+        gateContainer.classList.add('open');
+        setTimeout(function () {
+          gateOverlay.classList.add('hidden');
+        }, 950);
+      });
+
+      var progressBar = document.getElementById('progressBar');
+      var steps = Array.prototype.slice.call(document.querySelectorAll('.story-step'));
+      var lockIcon = document.getElementById('lockIcon');
+      var letter = document.getElementById('letter');
+      var opened = false;
+      var floats = Array.prototype.slice.call(document.querySelectorAll('.float'));
+
+      function openLetter() {
+        if (opened) return;
+        opened = true;
+        lockIcon.textContent = '';
+        lockIcon.style.transform = 'scale(1.12)';
+        letter.classList.add('show');
+      }
+
+      function setProgress() {
+        var doc = document.documentElement;
+        var total = doc.scrollHeight - window.innerHeight;
+        var pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+        var c = Math.max(0, Math.min(100, pct));
+        progressBar.style.width = c + '%';
+        if (c >= 74) openLetter();
+      }
+
+function updateStepsFast() {
+  const journey = document.getElementById('journey');
+  const steps = Array.from(document.querySelectorAll('.story-step'));
+  const journeyTop = journey.offsetTop;
+  const scrollY = window.scrollY + window.innerHeight / 2; // خط المنتصف للشاشة
+
+  steps.forEach((step, i) => {
+    const stepTop = step.offsetTop + journeyTop;
+    // لو نص الشاشة وصل لنص الخطوة، نفعلها
+    if (scrollY >= stepTop) {
+      step.classList.add('active');
+    } else {
+      step.classList.remove('active');
+    }
+  });
+}
+
+      function fallback() {
+        window.addEventListener('scroll', function () {
+          setProgress();
+          var j = document.getElementById('journey').getBoundingClientRect();
+          var total = window.innerHeight + j.height;
+          var passed = Math.max(0, Math.min(1, (window.innerHeight - j.top) / total));
+          updateStepsFast(passed);
+          var y = window.scrollY;
+          floats.forEach(function (f, i) {
+            var dir = i % 2 === 0 ? -1 : 1;
+            var speed = 0.04 + (i * 0.012);
+            f.style.transform = 'translateY(' + (y * speed * dir) + 'px)';
+          });
+        }, { passive: true });
+        setProgress();
+      }
+
+      if (!(window.gsap && window.ScrollTrigger)) {
+        fallback();
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+      window.addEventListener('scroll', setProgress, { passive: true });
+      setProgress();
+
+      floats.forEach(function (f, i) {
+        var dir = i % 2 === 0 ? -1 : 1;
+        gsap.to(f, {
+          yPercent: dir * (10 + i * 4),
+          rotation: dir * (4 + i),
+          ease: 'none',
+          scrollTrigger: { scrub: true }
+        });
+      });
+
+      ScrollTrigger.create({
+        trigger: '#journey',
+        start: 'top top+=70',
+        end: 'bottom bottom',
+        scrub: true,
+        onUpdate: function (self) { updateStepsFast(self.progress); }
+      });
+
+      gsap.from('.reveal', {
+        autoAlpha: 0,
+        y: 24,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.wrap', start: 'top 82%' }
+      });
+
+      ScrollTrigger.create({
+        trigger: '#unlockZone',
+        start: 'top 65%',
+        once: true,
+        onEnter: openLetter
+      });
+    })();
+  </script>
+  <script>
+  // الكتابة حرف حرف للرسالة
+  const letterPaper = document.querySelector('.letter-paper');
+  const fullText = letterPaper.textContent.trim(); // خزن النص كامل
+  letterPaper.textContent = ''; // امسح النص الأصلي
+  let index = 0;
+
+  function typeLetter() {
+    if (index < fullText.length) {
+      letterPaper.textContent += fullText[index];
+      index++;
+      setTimeout(typeLetter, 40); // 20ms بين كل حرف
+    }
+  }
+
+  // شغّل الكتابة لما الرسالة تظهر
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains('show')) {
+        typeLetter();
+      }
+    });
+  });
+
+  observer.observe(letter, { attributes: true, attributeFilter: ['class'] });
+</script>
+<audio id="bgMusic" loop>
+  <source src="love-song.mp3" type="audio/mpeg">
+  متصفحك لا يدعم تشغيل الموسيقى.
+</audio>
+<script>
+  // تشغيل الموسيقى لما يفتح البوابة
+  gateButton.addEventListener('click', function () {
+    const bgMusic = document.getElementById('bgMusic');
+    bgMusic.play();
+  });
+  gateButton.addEventListener('click', function () {
+  gateContainer.classList.add('open');
+  // انفجار نجوم
+  for (let i = 0; i < 12; i++) {
+    let star = document.createElement('div');
+    star.textContent = '✨';
+    star.style.position = 'absolute';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.fontSize = (12 + Math.random() * 20) + 'px';
+    star.style.opacity = 1;
+    gateContainer.appendChild(star);
+    gsap.to(star, { y: -200, opacity: 0, duration: 1 + Math.random(), ease: 'power1.out', onComplete: () => star.remove() });
+  }
+
+  // شغّل الموسيقى
+  bgMusic.play().catch(() => {});
+  
+  setTimeout(() => gateOverlay.classList.add('hidden'), 950);
+});
+var newFloats = Array.from(document.querySelectorAll('.vf1, .vf2, .vf3'));
+newFloats.forEach(function(f, i) {
+  let startX;
+  if (i === 0) startX = -200; // أقصى الشمال
+  if (i === 1) startX = 0;    // الوسط
+  if (i === 2) startX = 200;  // أقصى اليمين
+
+  gsap.set(f, { x: startX }); // ضبط المكان الابتدائي
+
+  gsap.to(f, {
+    yPercent: (i % 2 === 0 ? -1 : 1) * (10 + i * 4),
+    rotation: (i % 2 === 0 ? -1 : 1) * (4 + i),
+    ease: 'none',
+    scrollTrigger: { scrub: true }
+  });
+});
+
+</script>
+</body>
+</html>
+
